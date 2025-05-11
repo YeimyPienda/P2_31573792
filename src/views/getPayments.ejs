@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros de Pagos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/table.css">
+</head>
+<body>
+    <div class="payments-container">
+        <div class="payments-header">
+            <h1 class="payments-title">
+                <i class="fas fa-credit-card"></i>Registros de Pagos
+            </h1>
+            <div class="payments-count">Total: <%=datePayments.length%></div>
+        </div>
+
+        <% if (datePayments.length > 0) { %>
+            <div class="payments-grid">
+                <% datePayments.forEach((payment, index) => { %>
+                    <div class="payment-card" style="animation-delay: <%= index * 0.1 %>s">
+                        <div class="payment-card-header">
+                            <h3 class="payment-card-title"><%= payment.nombreTitular %></h3>
+                            <span class="payment-card-type">
+                                <% if (['4'].includes(payment.cardNumber.charAt(0))) { %>
+                                    <i class="fab fa-cc-visa"></i> Visa
+                                <% } else if (['5'].includes(payment.cardNumber.charAt(0))) { %>
+                                    <i class="fab fa-cc-mastercard"></i> Mastercard
+                                <% } else if (['3'].includes(payment.cardNumber.charAt(0))) { %>
+                                    <i class="fab fa-cc-amex"></i> Amex
+                                <% } else { %>
+                                    <i class="fas fa-credit-card"></i> Tarjeta
+                                <% } %>
+                            </span>
+                        </div>
+                        
+                        <div class="payment-card-body">
+                            <div class="payment-detail">
+                                <span class="payment-detail-label">Correo:</span>
+                                <span class="payment-detail-value contact-email"><%= payment.correo %></span>
+                            </div>
+                            
+                            <div class="payment-detail">
+                                <span class="payment-detail-label">Tarjeta:</span>
+                                <span class="payment-detail-value payment-card-number">•••• •••• •••• <%= payment.cardNumber.slice(-4) %></span>
+                            </div>
+                            
+                            <div class="payment-detail">
+                                <span class="payment-detail-label">Expira:</span>
+                                <span class="payment-detail-value payment-card-expiry">
+                                    <%= payment.expMonth %>/<%= payment.expYear.toString().slice(-2) %>
+                                </span>
+                            </div>
+                            
+                            <div class="payment-detail">
+                                <span class="payment-detail-label">Moneda:</span>
+                                <span class="payment-detail-value payment-card-currency">
+                                    <% if (payment.currency === 'USD') { %>
+                                        $ USD
+                                    <% } else if (payment.currency === 'EUR') { %>
+                                        € EUR
+                                    <% } else if (payment.currency === 'GBP') { %>
+                                        £ GBP
+                                    <% } else { %>
+                                        <%= payment.currency %>
+                                    <% } %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="payment-detail">
+                             <span class="payment-detail-label">Monto:</span>
+                              
+                              <span class="payment-detail-value payment-card-currency">
+                                    <%=payment.amount%>
+                                </span>
+                        </div>
+
+                        
+                        
+                        <div class="payment-card-footer">
+                            <div class="payment-date">
+                                <i class="far fa-calendar-alt"></i>
+                                <%= new Date(payment.createdAt).toLocaleDateString() %>
+                            </div>
+                            <div>
+                                <i class="far fa-clock"></i>
+                                <%= new Date(payment.createdAt).toLocaleTimeString() %>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="no-payments">
+                <i class="far fa-credit-card"></i>
+                <p>No hay registros de pagos disponibles</p>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

@@ -1,0 +1,204 @@
+:root {
+      --primary: #ff4081;
+      --secondary: #FF80AB;
+      --dark: #2d3436;
+      --light: #f5f6fa;
+      --success: #00b894;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .payment-wrapper {
+      display: flex;
+      max-width: 1000px;
+      width: 100%;
+      background: white;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .payment-card {
+      flex: 1;
+      padding: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .payment-card-header {
+      margin-bottom: 30px;
+    }
+    
+    .payment-card-header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .payment-card-header p {
+      opacity: 0.9;
+    }
+    
+    .card-preview {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      margin: 20px 0;
+      backdrop-filter: blur(5px);
+    }
+    
+    .card-chip {
+      width: 50px;
+      height: 40px;
+      background: linear-gradient(135deg, #ffd700, #f5d76e);
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .card-number {
+      font-size: 22px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .card-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+    
+    .payment-form-container {
+      flex: 1;
+      padding: 40px;
+    }
+    
+    .form-header {
+      margin-bottom: 30px;
+    }
+    
+    .form-header h2 {
+      font-size: 24px;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+    
+    .form-header p {
+      color: #7f8c8d;
+    }
+    
+    .payment-form {
+      display: grid;
+      gap: 20px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .form-label {
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+      font-size: 14px;
+    }
+    
+    .form-input {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background-color: var(--light);
+    }
+    
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+      outline: none;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .form-col {
+      flex: 1;
+    }
+    
+    .submit-btn {
+      background-color: var(--primary);
+      color: white;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .submit-btn:hover {
+      opacity:.6;
+      transform: translateY(-2px);
+    }
+    
+    .secure-payment {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      color:white;
+      font-size: 14px;
+    }
+    
+    @media (max-width: 768px) {
+      .payment-wrapper {
+        flex-direction: column;
+      }
+      
+      .payment-card {
+        padding: 30px;
+      }
+      
+      .payment-form-container {
+        padding: 30px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }

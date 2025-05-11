@@ -1,0 +1,210 @@
+ :root {
+            --primary-color: #ff4081;
+            --secondary-color: #FF80AB;
+            --dark-bg: #2D2D2D;
+            --light-bg: #F5F5F5;
+            --text-dark: #333;
+            --text-light: #FFF;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-dark);
+        }
+
+        .payments-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .payments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 12px;
+            color: var(--text-light);
+            box-shadow: 0 10px 20px rgba(255, 64, 129, 0.2);
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .payments-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payments-count {
+            background-color: var(--text-light);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .payments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .payment-card {
+            background-color: var(--text-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            animation: fadeIn 0.5s ease-out;
+            animation-fill-mode: both;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .payment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .payment-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-bg);
+            margin: 0;
+        }
+
+        .payment-card-type {
+            font-size: 0.9rem;
+            background-color: rgba(255, 64, 129, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .payment-card-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-detail {
+            display: flex;
+            margin-bottom: 0.8rem;
+        }
+
+        .payment-detail-label {
+            font-weight: 500;
+            color: var(--dark-bg);
+            width: 120px;
+            opacity: 0.7;
+        }
+
+        .payment-detail-value {
+            flex: 1;
+        }
+
+        .payment-card-number {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            color: var(--dark-bg);
+            font-weight: 600;
+        }
+
+        .payment-card-expiry {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .payment-card-currency {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .payment-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.9rem;
+            color: var(--dark-bg);
+            opacity: 0.8;
+        }
+
+        .payment-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .no-payments {
+            text-align: center;
+            padding: 3rem;
+            background-color: var(--text-light);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .no-payments i {
+            font-size: 3rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .no-payments p {
+            font-size: 1.2rem;
+            color: var(--dark-bg);
+            opacity: 0.7;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Retrasos para las tarjetas */
+        .payment-card:nth-child(1) { animation-delay: 0.1s; }
+        .payment-card:nth-child(2) { animation-delay: 0.2s; }
+        .payment-card:nth-child(3) { animation-delay: 0.3s; }
+        .payment-card:nth-child(4) { animation-delay: 0.4s; }
+        .payment-card:nth-child(5) { animation-delay: 0.5s; }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .payments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .payments-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }

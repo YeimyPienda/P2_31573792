@@ -1,0 +1,33 @@
+{
+  "name": "segurihome",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "scripts": {
+    "dev": "nodemon --exec \"node --no-warnings --import tsx/esm src/app.ts\"",
+    "build": "tsc && tsc-alias && copyfiles -u 1 src/public/**/* dist/ && copyfiles -u 1 src/views/**/* dist/ && copyfiles -u 1 src/config/**/* dist/",
+    "start": "node dist/app.js",
+    "prestart": "npm run build"
+  },
+  "keywords": [],
+  "author": "SuperAdmin",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7",
+    "tsc-alias": "^1.8.16"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.9",
+    "copyfiles": "^2.4.1",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
