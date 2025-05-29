@@ -12,6 +12,7 @@ interface ContactoAttributes {
   email: string;
   nombre: string;
   comentario: string;
+  pais:string
   ip: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -27,6 +28,7 @@ class ContactoModel extends Model<ContactoAttributes, ContactoCreationAttributes
   public email!: string;
   public nombre!: string;
   public comentario!: string;
+  public pais:string;
   public ip!: string;
   
   // Timestamps
@@ -91,6 +93,10 @@ ContactoModel.init(
     comentario: {
       type: DataTypes.STRING(30),
       allowNull: false
+    },
+    pais:{
+      type:DataTypes.STRING,
+      allowNull:false
     },
     ip:{
       type:DataTypes.STRING,

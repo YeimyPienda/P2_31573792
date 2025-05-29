@@ -28,7 +28,13 @@ class ContactsController {
     const {email,nombre,comentario}: Contacto = req.body;
     try {
        const ip = req.ip || 'unknown';
-      await ContactosModel.addContact({email,nombre,comentario,ip});
+       fetch(`http://api.ipstack.com/${ip}?access_key=01c5c83e58d1ff017761af852a2d6ad7`)
+       .then(res=>res.json())
+       .then(res=>{
+        const pais = res.country_name || 'datos-de-prueba-activados';
+        await ContactosModel.addContact({email,nombre,comentario,pais,ip});
+       });
+      
       res.status(201).json({status:true});
     } catch (error: any){
       console.error(error);
