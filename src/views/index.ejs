@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
     <script src="/js/alertConfig.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PR0JZ8E3L"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-6PR0JZ8E3L');
+  </script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     <nav class="navbar">
@@ -223,6 +233,9 @@
                 <div class="form-group">
                     <textarea rows="5" placeholder="Tu Mensaje..." required id='comentario' name='comentario'></textarea>
                 </div>
+
+                <!-- reCAPTCHA -->
+                <div class="g-recaptcha" data-sitekey="<%=sitioKey%>"></div>
                 
                 <button type="submit" class="submit-btn">Enviar Mensaje</button>
             </form>
@@ -258,10 +271,9 @@
         </div>
         
         <div class="footer-copyright">
-            <p>© 2024 SeguriHome. Todos los derechos reservados.</p>
+            <p>© 2025 SeguriHome. Todos los derechos reservados.</p>
         </div>
     </footer>
-
     <script src="/js/main.js"></script>
     <script src="/js/fetch.js"></script>
     <script src="/js/clickCards.js"></script>

@@ -12,7 +12,7 @@ interface ContactoAttributes {
   email: string;
   nombre: string;
   comentario: string;
-  pais:string
+  pais:string;
   ip: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -22,15 +22,7 @@ interface ContactoAttributes {
 interface ContactoCreationAttributes extends Optional<ContactoAttributes, 'id'> {}
 
 // Clase del modelo Contacto con TypeScript
-class ContactoModel extends Model<ContactoAttributes, ContactoCreationAttributes> 
-  implements ContactoAttributes {
-  public id!: number;
-  public email!: string;
-  public nombre!: string;
-  public comentario!: string;
-  public pais:string;
-  public ip!: string;
-  
+class ContactoModel extends Model<ContactoAttributes, ContactoCreationAttributes>{
   // Timestamps
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -47,23 +39,15 @@ interface PaymentAttributes {
   cvv:string;
   currency: string;
   amount:string;
+  descripcion:string;
+  reference:string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 interface PaymentCreationAttributes extends Optional<PaymentAttributes, 'id'> {}
 
-class PaymentModel extends Model<PaymentAttributes, PaymentCreationAttributes> 
-  implements PaymentAttributes {
-  public id!: number;
-  public correo!: string;
-  public nombreTitular!: string;
-  public cardNumber!:string;
-  public expMonth!: number;
-  public expYear!: number;
-  public cvv!:string;
-  public currency!: string;
-  public amount!:string
+class PaymentModel extends Model<PaymentAttributes, PaymentCreationAttributes>{
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -160,7 +144,14 @@ PaymentModel.init(
     amount:{
       type:DataTypes.DECIMAL,
       allowNull:false
-
+    },
+    descripcion:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    reference:{
+      type:DataTypes.STRING,
+      allowNull:false
     }
   },
   {

@@ -1,5 +1,9 @@
 import express, { Application } from 'express';
 //importamos el modulo path del sistema web!!
+import * as dotenv from 'dotenv';
+
+// Cargar variables de entorno
+dotenv.config();
 import path from 'path';
 import { fileURLToPath } from 'url';
 import mainRouter from '@routes/index.js'; 
