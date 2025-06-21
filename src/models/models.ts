@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
+import { Sequelize, DataTypes, Model, Optional , Op} from 'sequelize';
 
 import path from 'path';
 import { fileURLToPath } from 'url'; 
@@ -16,11 +16,6 @@ interface ContactoAttributes {
   ip: string;
   createdAt?:Date;
   updatedAt?:Date;
-}
-
-interface UserAttributes{
-  username:string;
-  password_hash:string;
 }
 
 // Atributos opcionales para creación (id es autoincremental)
@@ -166,45 +161,59 @@ PaymentModel.init(
     freezeTableName: true
   }
   );
-interface UserAttributes{
-  id:number;
-  username?:string;
-  email:string;
-  password_hash:string;
-  createdAt:Date;
-  updatedAt:Date;
+interface UserAttributes {
+  id: number;
+  username?: string; // Hacerlo opcional para usuarios de Google
+  email: string;
+  password_hash?: string | null; // Hacerlo opcional y nullable
+  googleId?: string; // Nuevo campo para el ID de Google
+  provider?: string; // 'local' o 'google'
+  createdAt: Date;
+  updatedAt: Date;
 }
-interface UserCreationAttributes extends Optional<UserAttributes,'id' | 'createdAt' | 'updatedAt'> {}
 
-class UserModel extends Model<UserAttributes,UserCreationAttributes>{}
+interface UserCreationAttributes extends Optional<UserAttributes, 
+'id' | 'createdAt' | 'updatedAt' | 'password_hash' | 'googleId' | 'provider'> {}
 
-UserModel.init({
- id:{
-  type:DataTypes.INTEGER,
-  autoIncrement: true,
-  primaryKey: true
-},
-username:{
-  type:DataTypes.STRING,
-  allowNull:false,
-  unique:true
-},
-email:{
-  type:DataTypes.STRING,
-  allowNull:false,
-  unique:true
-},
-password_hash:{
-  type:DataTypes.STRING,
-  allowNull:false 
-}
-},{
- sequelize,
- modelName:'user',
- timestamps: true,
- freezeTableName: true
-})
+export class UserModel extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {}
 
+UserModel.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+    password_hash: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    provider: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: 'local'
+    }
+  },
+  {
+    sequelize,
+    modelName: 'user',
+    tableName: 'user',
+    timestamps: true
+  }
+);
 class ContactsModel {
   constructor() {
     this.connect();
@@ -310,28 +319,61 @@ class ContactsModel {
   }
   public async loginPost(data: {email: string, password_hash: string}): Promise<{success: boolean, message?: string,user?:UserAttributes}> {
     try {
-      const user = await UserModel.findOne({ 
-      where: { email: data.email } // Corrección aquí
-    });
-
+      const user = await UserModel.findOne({ where: { email: data.email } });
       if (!user) {
         return { success: false, message: 'Usuario no encontrado' };
       }
 
-      // 2. Comparación directa con bcrypt (sin método en el modelo)
-      const isMatch = await bcrypt.compare(data.password_hash,user.password_hash);
+    // Verifica si es un usuario de Google
+      if (user.provider === 'google') {
+        return { success: false, message: 'Este usuario debe iniciar sesión con Google' };
+      }
+
+    // Verifica que ambas contraseñas estén presentes
+      if (!user.password_hash || !data.password_hash) {
+        return { success: false, message: 'Faltan credenciales' };
+      }
+
+      const isMatch = await bcrypt.compare(data.password_hash, user.password_hash);
 
       if (!isMatch) {
         return { success: false, message: 'Contraseña incorrecta' };
       }
 
-      return { success: true ,user};
+      return { success: true, user };
 
     } catch (error: any) {
       console.error('Error al iniciar sesión:', error.message);
       throw new Error('Error en el servidor al verificar credenciales');
     }
   }
+
+  public getModelUser():UserAttributes[]{
+    try{
+     return UserModel;
+   }catch(error){
+    console.error('Error al obtener modelo:', error.message);
+    throw new Error('Error al obtener modelo UserModel');
+  }
+}
+  public async getFilteredContact(query:string):Promise<ContactoAttributes[]>{
+    try{
+     let whereCondition = {};
+     if (query){
+      whereCondition = {
+        [Op.or]: [
+          { nombre: { [Op.like]: `%${query}%` } }, // iLike para no distinguir mayúsculas/minúsculas (PostgreSQL)
+          { email: { [Op.like]: `%${query}%` } }
+        ]
+      };
+    }
+    const result = await ContactoModel.findAll({ where: whereCondition });
+    return result;
+  }catch(error:any){
+    console.error('Error al filtrar:', error.message);
+    throw new Error('Error en el servidor');
+  }
+}
 }
 
 // Exportamos una instancia única del modelo (Singleton)

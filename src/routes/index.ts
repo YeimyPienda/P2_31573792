@@ -9,7 +9,7 @@ router.get('/admin/contacts',isAuthenticated,ContactosController.getAllContacts)
 router.get('/payment',isAuthenticated,ContactosController.payment);
 router.get('/getPayment',isAuthenticated,ContactosController.getPayment);
 router.get('/login',ContactosController.login);
-router.get('/logout',ContactosController.logout)
+router.get('/filter',ContactosController.getFilteredContact);
 //RUTAS POST
 router.post('/contact/add',ContactosController.add);
 router.post('/payment/add',ContactosController.paymentAdd);

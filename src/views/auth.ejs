@@ -8,6 +8,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/css/auth.css">
   <script src="js/alertConfig.js"></script>
+  <style>
+    .google-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 15px;
+      background: white;
+      color: #444;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+
+    .google-btn img {
+      width: 20px;
+      margin-right: 10px;
+    }
+  </style>
 </head>
 <body>
   <%- include('partials/nav') %>
@@ -15,163 +32,164 @@
   <div class="auth-container">
     <div class="auth-switcher">
       <button 
-        class="auth-btn <%= formType === 'login' ? 'active' : '' %>" 
-        onclick="switchForm('login')"
+      class="auth-btn <%= formType === 'login' ? 'active' : '' %>" 
+      onclick="switchForm('login')"
       >
-        Iniciar Sesión
-      </button>
-      <button 
-        class="auth-btn <%= formType === 'register' ? 'active' : '' %>" 
-        onclick="switchForm('register')"
-      >
-        Registrarse
-      </button>
-    </div>
+      Iniciar Sesión
+    </button>
+    <button 
+    class="auth-btn <%= formType === 'register' ? 'active' : '' %>" 
+    onclick="switchForm('register')"
+    >
+    Registrarse
+  </button>
+</div>
 
-    <% if (formType === 'login') { %>
-      <form id='formLogin' class="auth-form">
-        <h2>Iniciar Sesión</h2>
-        
-        <div class="form-group">
-          <label for="login-email">Correo Electrónico</label>
-          <input 
-            type="email" 
-            id="login-email" 
-            name="email" 
-            required
-            placeholder="tucorreo@ejemplo.com"
-          >
-        </div>
+<% if (formType === 'login') { %>
+<form id='formLogin' class="auth-form">
+  <h2>Iniciar Sesión</h2>
 
-        <div class="form-group">
-          <label for="login-password">Contraseña</label>
-          <input 
-            type="password" 
-            id="login-password" 
-            name="password_hash" 
-            required
-            placeholder="••••••••"
-          >
-        </div>
-
-        <button type="submit" class="submit-btn">Ingresar</button>
-      </form>
-    <% } else { %>
-      <form id='formRegister' class="auth-form">
-        <h2>Crear Cuenta</h2>
-        
-        <div class="form-group">
-          <label for="register-name">Nombre Completo</label>
-          <input 
-            type="text" 
-            id="username" 
-            name="username" 
-            required
-            placeholder="Juan Pérez"
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="register-email">Correo Electrónico</label>
-          <input 
-            type="email" 
-            id="register-email" 
-            name="email" 
-            required
-            placeholder="tucorreo@ejemplo.com"
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="register-password">Contraseña</label>
-          <input 
-            type="password" 
-            id="register-password" 
-            name="password_hash" 
-            required
-            placeholder="••••••••"
-            minlength="6"
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="register-confirm">Confirmar Contraseña</label>
-          <input 
-            type="password" 
-            id="register-confirm" 
-            name="passwordHash" 
-            required
-            placeholder="••••••••"
-          >
-        </div>
-
-        <button type="submit" class="submit-btn">Registrarse</button>
-      </form>
-    <% } %>
+  <div class="form-group">
+    <label for="login-email">Correo Electrónico</label>
+    <input 
+    type="email" 
+    id="login-email" 
+    name="email" 
+    required
+    placeholder="tucorreo@ejemplo.com"
+    >
   </div>
 
-  <%- include('partials/footer') %>
+  <div class="form-group">
+    <label for="login-password">Contraseña</label>
+    <input 
+    type="password" 
+    id="login-password" 
+    name="password_hash" 
+    required
+    placeholder="••••••••"
+    >
+  </div>
 
-  <script>
-    function switchForm(type) {
-      window.location.href = `/login?form=${type}`;
-    }
-  </script>
-  <script>
-    let formData,data;
-    const formRegister = document.querySelector('#formRegister');
-    
-    formRegister.addEventListener('submit',e=>{
-     e.preventDefault();
-     formData = new FormData(e.target);
-     data = Object.fromEntries(formData.entries());
+  <a href="/auth/google" class="bg-red-500 text-white px-4 py-2 rounded">
+  Iniciar sesión con Google
+</a>
 
-     fetch('/registerUser',{
-      method:'POST',
-      headers:{
-        "Content-type":"application/json"
-      },
-      body:JSON.stringify(data)
-     })
-     .then(res=>res.json())
-     .then(res=>{
-      if(res.status){
+
+
+  <button type="submit" class="submit-btn">Ingresar</button>
+</form>
+<% } else { %>
+<form id='formRegister' class="auth-form">
+  <h2>Crear Cuenta</h2>
+
+  <div class="form-group">
+    <label for="register-name">Nombre Completo</label>
+    <input 
+    type="text" 
+    id="username" 
+    name="username" 
+    required
+    placeholder="Juan Pérez"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="register-email">Correo Electrónico</label>
+    <input 
+    type="email" 
+    id="register-email" 
+    name="email" 
+    required
+    placeholder="tucorreo@ejemplo.com"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="register-password">Contraseña</label>
+    <input 
+    type="password" 
+    id="register-password" 
+    name="password_hash" 
+    required
+    placeholder="••••••••"
+    minlength="6"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="register-confirm">Confirmar Contraseña</label>
+    <input 
+    type="password" 
+    id="register-confirm" 
+    name="passwordHash" 
+    required
+    placeholder="••••••••"
+    >
+  </div>
+
+  <button type="submit" class="submit-btn">Registrarse</button>
+</form>
+<% } %>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+  function switchForm(type) {
+    window.location.href = `/login?form=${type}`;
+  }
+</script>
+<script>
+  const formRegister = document.querySelector('#formRegister');
+  if (formRegister) {
+    formRegister.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      fetch('/registerUser', {
+        method: 'POST',
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(res => {
         Swal.fire(res.message);
-      }else if(res.status==null){
-        Swal.fire(res.message);
-      }else if(res.status=='notUnique'){
-        Swal.fire(`${res.message} ${res.errors.message}`);
-      }else{
-        Swal.fire(res.message);
-      }
-     })
+      });
     });
-  </script>
-  <script>
-    const formLogin = document.querySelector('#formLogin');
-    formLogin.addEventListener('submit',e=>{
-    e.preventDefault();
-    formData = new FormData(e.target);
-    data = Object.fromEntries(formData.entries());
+  }
+</script>
 
-    fetch('/loginPost',{
-      method:'POST',
-      headers:{
-        "Content-type":"application/json"
-      },
-      body:JSON.stringify(data)
-    })
-    .then(res=>res.json())
-    .then(res=>{
-      if(res.status){
-        Swal.fire(res.message).then(()=>{
-         window.location.href='/admin/contacts';
-        });
-      }else{
-        Swal.fire(res.message);
-      }
-    })
+<script>
+  const formLogin = document.querySelector('#formLogin');
+  if (formLogin) {
+    formLogin.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      fetch('/loginPost', {
+        method: 'POST',
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status) {
+          Swal.fire(res.message).then(() => {
+            window.location.href = '/admin/contacts';
+          });
+        } else {
+          Swal.fire(res.message);
+        }
+      });
     });
-  </script>
+  }
+</script>
 </body>
 </html>

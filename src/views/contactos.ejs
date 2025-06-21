@@ -10,68 +10,76 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-     <%- include('partials/nav') %>
-    <div class="payments-container"> <!-- Misma clase contenedora -->
-        <div class="payments-header"> <!-- Misma clase header -->
+    <%- include('partials/nav') %>
+     
+    <div class="payments-container">
+        <div class="payments-header">
             <h1 class="payments-title">
                 <i class="fas fa-users"></i> Registros de Contactos
             </h1>
             <div class="payments-count">Total: <%= contacts.length %></div>
         </div>
+         
+        <!-- 🔍 Buscador -->
+        <form id="filterForm" class="mb-4">
+            <input type="text" id="searchInput" placeholder="Buscar por nombre o correo..." class="search-input" />
+        </form>
 
-        <% if (contacts.length > 0) { %>
-            <div class="payments-grid"> <!-- Misma clase grid -->
+        <!-- Contenedor dinámico de contactos -->
+        <div id="contactsContainer">
+            <% if (contacts.length > 0) { %>
+            <div class="payments-grid">
                 <% contacts.forEach((contact, index) => { %>
-                    <div class="payment-card" style="animation-delay: <%= index * 0.1 %>s"> <!-- Misma clase card -->
-                        <div class="payment-card-header">
-                            <h3 class="payment-card-title"><%= contact.nombre %></h3>
-                            <span class="payment-card-type">
-                                <i class="fas fa-user-tag"></i> Contacto
-                            </span>
-                        </div>
-                        
-                        <div class="payment-card-body">
-                            <div class="payment-detail">
-                                <span class="payment-detail-label">Correo:</span>
-                                <span class="payment-detail-value contact-email"><%= contact.email %></span>
-                            </div>
-                            
-                            <div class="payment-detail">
-                                <span class="payment-detail-label">Comentario:</span>
-                                <span class="payment-detail-value"><%= contact.comentario %></span>
-                            </div>
+                <div class="payment-card" style="animation-delay: <%= index * 0.1 %>s">
+                    <div class="payment-card-header">
+                        <h3 class="payment-card-title"><%= contact.nombre %></h3>
+                        <span class="payment-card-type">
+                            <i class="fas fa-user-tag"></i> Contacto
+                        </span>
+                    </div>
 
-                             <div class="payment-detail">
-                                <span class="payment-detail-label">Pais:</span>
-                                <span class="payment-detail-value"><%= contact.pais %></span>
-                            </div>
-                            
-                            <div class="payment-detail">
-                                <span class="payment-detail-label">IP:</span>
-                                <span class="payment-detail-value contact-ip"><%= contact.ip %></span>
-                            </div>
+                    <div class="payment-card-body">
+                        <div class="payment-detail">
+                            <span class="payment-detail-label">Correo:</span>
+                            <span class="payment-detail-value contact-email"><%= contact.email %></span>
                         </div>
-                        
-                        <div class="payment-card-footer">
-                            <div class="payment-date">
-                                <i class="far fa-calendar-alt"></i>
-                                <%= new Date(contact.createdAt).toLocaleDateString() %>
-                            </div>
-                            <div>
-                                <i class="far fa-clock"></i>
-                                <%= new Date(contact.createdAt).toLocaleTimeString() %>
-                            </div>
+                        <div class="payment-detail">
+                            <span class="payment-detail-label">Comentario:</span>
+                            <span class="payment-detail-value"><%= contact.comentario %></span>
+                        </div>
+                        <div class="payment-detail">
+                            <span class="payment-detail-label">Pais:</span>
+                            <span class="payment-detail-value"><%= contact.pais %></span>
+                        </div>
+                        <div class="payment-detail">
+                            <span class="payment-detail-label">IP:</span>
+                            <span class="payment-detail-value contact-ip"><%= contact.ip %></span>
                         </div>
                     </div>
+
+                    <div class="payment-card-footer">
+                        <div class="payment-date">
+                            <i class="far fa-calendar-alt"></i>
+                            <%= new Date(contact.createdAt).toLocaleDateString() %>
+                        </div>
+                        <div>
+                            <i class="far fa-clock"></i>
+                            <%= new Date(contact.createdAt).toLocaleTimeString() %>
+                        </div>
+                    </div>
+                </div>
                 <% }); %>
             </div>
-        <% } else { %>
+            <% } else { %>
             <div class="no-payments">
                 <i class="fas fa-inbox"></i>
                 <p>No hay registros de contactos disponibles</p>
             </div>
-        <% } %>
+            <% } %>
+        </div>
     </div>
-     <%- include('partials/footer') %>
+
+    <%- include('partials/footer') %>
+    <script src="/js/filter.js"></script>
 </body>
 </html>
