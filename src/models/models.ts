@@ -2,20 +2,25 @@ import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 import path from 'path';
 import { fileURLToPath } from 'url'; 
-
+import bcrypt from 'bcrypt';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Definición de la interfaz para los atributos del Contacto
 interface ContactoAttributes {
-  id?: number;
-  email: string;
-  nombre: string;
-  comentario: string;
+  id:number;
+  email:string;
+  nombre:string;
+  comentario:string;
   pais:string;
   ip: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?:Date;
+  updatedAt?:Date;
+}
+
+interface UserAttributes{
+  username:string;
+  password_hash:string;
 }
 
 // Atributos opcionales para creación (id es autoincremental)
@@ -30,7 +35,7 @@ class ContactoModel extends Model<ContactoAttributes, ContactoCreationAttributes
 
 // Añade estas interfaces al archivo
 interface PaymentAttributes {
-  id?: number;
+  id: number;
   correo: string;
   nombreTitular: string;
   cardNumber: string;
@@ -60,61 +65,61 @@ const sequelize = new Sequelize({
 
 // Inicialización del modelo
 ContactoModel.init(
-  {
-    id:{
-      type:DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true
-    },
-    email:{
-      type: DataTypes.STRING(30),
-      allowNull: false
-    },
-    nombre:{
-      type: DataTypes.STRING(30),
-      allowNull: false
-    },
-    comentario: {
-      type: DataTypes.STRING(30),
-      allowNull: false
-    },
-    pais:{
-      type:DataTypes.STRING,
-      allowNull:false
-    },
-    ip:{
-      type:DataTypes.STRING,
-      allowNull:false
-    }
+{
+  id:{
+    type:DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
   },
-  {
-    sequelize,
-    modelName: 'contacto',
-    timestamps: true,
-    freezeTableName: true
+  email:{
+    type: DataTypes.STRING(30),
+    allowNull: false
+  },
+  nombre:{
+    type: DataTypes.STRING(30),
+    allowNull: false
+  },
+  comentario: {
+    type: DataTypes.STRING(30),
+    allowNull: false
+  },
+  pais:{
+    type:DataTypes.STRING,
+    allowNull:false
+  },
+  ip:{
+    type:DataTypes.STRING,
+    allowNull:false
   }
+},
+{
+  sequelize,
+  modelName: 'contacto',
+  timestamps: true,
+  freezeTableName: true
+}
 );
 
 // Inicialización del modelo Payment
 PaymentModel.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true
-    },
-    correo: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      validate: {
-        isEmail: true
-      }
-    },
-    nombreTitular: {
-      type: DataTypes.STRING(60),
-      allowNull: false
-    },
-    cardNumber: {
+{
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  correo: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    validate: {
+      isEmail: true
+    }
+  },
+  nombreTitular: {
+    type: DataTypes.STRING(60),
+    allowNull: false
+  },
+  cardNumber: {
       type: DataTypes.STRING(19), // Para formato "4242 4242 4242 4242"
       allowNull: false
     },
@@ -160,13 +165,50 @@ PaymentModel.init(
     timestamps: true,
     freezeTableName: true
   }
-);
+  );
+interface UserAttributes{
+  id:number;
+  username?:string;
+  email:string;
+  password_hash:string;
+  createdAt:Date;
+  updatedAt:Date;
+}
+interface UserCreationAttributes extends Optional<UserAttributes,'id' | 'createdAt' | 'updatedAt'> {}
+
+class UserModel extends Model<UserAttributes,UserCreationAttributes>{}
+
+UserModel.init({
+ id:{
+  type:DataTypes.INTEGER,
+  autoIncrement: true,
+  primaryKey: true
+},
+username:{
+  type:DataTypes.STRING,
+  allowNull:false,
+  unique:true
+},
+email:{
+  type:DataTypes.STRING,
+  allowNull:false,
+  unique:true
+},
+password_hash:{
+  type:DataTypes.STRING,
+  allowNull:false 
+}
+},{
+ sequelize,
+ modelName:'user',
+ timestamps: true,
+ freezeTableName: true
+})
 
 class ContactsModel {
   constructor() {
     this.connect();
   }
-
   /**
    * Conecta y sincroniza el modelo con la base de datos
    * @returns {Promise<void>}
@@ -175,13 +217,12 @@ class ContactsModel {
     try {
       await sequelize.sync({force:false});
       console.log('Base de datos sincronizada correctamente');
-       console.log('Ubicación de la base de datos:', path.join(__dirname, '../config/base.db'))
-    } catch (error) {
+      console.log('Ubicación de la base de datos:', path.join(__dirname, '../config/base.db'))
+    } catch (error){
       console.error('Error al sincronizar la base de datos:', error);
       throw error;
     }
   }
-
   /**
    * Agrega un nuevo contacto
    * @param {ContactoCreationAttributes} contactData - Datos del contacto
@@ -195,24 +236,22 @@ class ContactsModel {
       throw error;
     }
   }
-
   /**
    * Obtiene todos los contactos
    * @returns {Promise<ContactoModel[]>} Lista de contactos
    */
-  public async getAllContacts(): Promise<any[]> {
-  try {
-    const data = await ContactoModel.findAll({ 
+  public async getAllContacts(): Promise<ContactoAttributes[]> {
+    try {
+      const data = await ContactoModel.findAll({ 
       raw: true, // Devuelve objetos planos
       order: [['createdAt','DESC']] // Ordenar por fecha
     });
-    return data;
-  } catch (error) {
-    console.error('Error al obtener contactos:', error);
-    throw error;
+      return data;
+    } catch (error) {
+      console.error('Error al obtener contactos:', error);
+      throw error;
+    }
   }
-}
-
   // Ejemplo de método adicional con TypeScript
   /**
    * Obtiene un contacto por ID
@@ -227,7 +266,6 @@ class ContactsModel {
       throw error;
     }
   }
-
   /**
    * Agrega un nuevo pago
    * @param {PaymentCreationAttributes} paymentData - Datos del pago
@@ -247,20 +285,51 @@ class ContactsModel {
       throw error;
     }
   }
-
   /**
    * Obtiene todos los pagos
    * @returns {Promise<PaymentModel[]>} Lista de pagos
    */
-  public async getAllPayments(): Promise<any[]> {
+  public async getAllPayments():Promise<PaymentAttributes[]> {
     try {
       return await PaymentModel.findAll({
         raw: true,
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt','DESC']]
       });
     } catch (error) {
       console.error('Error al obtener los pagos:', error);
       throw error;
+    }
+  }
+  public async registerUser(data:UserCreationAttributes):Promise<UserModel>{
+    try{
+      return await UserModel.create(data);
+    }catch(error:any){
+      console.error('Error al registrar usuarios:', error.message);
+      throw error;
+    }
+  }
+  public async loginPost(data: {email: string, password_hash: string}): Promise<{success: boolean, message?: string,user?:UserAttributes}> {
+    try {
+      const user = await UserModel.findOne({ 
+      where: { email: data.email } // Corrección aquí
+    });
+
+      if (!user) {
+        return { success: false, message: 'Usuario no encontrado' };
+      }
+
+      // 2. Comparación directa con bcrypt (sin método en el modelo)
+      const isMatch = await bcrypt.compare(data.password_hash,user.password_hash);
+
+      if (!isMatch) {
+        return { success: false, message: 'Contraseña incorrecta' };
+      }
+
+      return { success: true ,user};
+
+    } catch (error: any) {
+      console.error('Error al iniciar sesión:', error.message);
+      throw new Error('Error en el servidor al verificar credenciales');
     }
   }
 }

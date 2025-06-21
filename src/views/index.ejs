@@ -18,20 +18,20 @@
   </script>
   <style>
       /* --- HAMBURGER STYLES --- */
-.hamburger {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-}
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+    }
 
-.hamburger .bar {
-    height: 4px;
-    width: 25px;
-    background-color: #000; /* Color negro */
-    margin: 4px 0;
-    border-radius: 2px;
-    transition: 0.4s;
-}
+    .hamburger .bar {
+        height: 4px;
+        width: 25px;
+        background-color: #000; /* Color negro */
+        margin: 4px 0;
+        border-radius: 2px;
+        transition: 0.4s;
+    }
 
 /* Mostrar el botón en pantallas pequeñas */
 @media (max-width: 768px) {
@@ -67,33 +67,12 @@
     }
 }
 
-  </style>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</style>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="logo">
-                <h1>SeguriHome</h1>
-                <img src="/img/261.svg" alt="Sistema de seguridad inteligente" class="nav-img">
-            </a>
-            
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="#servicios" class="nav-link"><i class="fas fa-shield-alt"></i> Servicios</a></li>
-                <li><a href="#tecnologia" class="nav-link"><i class="fas fa-microchip"></i> Tecnología</a></li>
-                <li><a href="#testimonios" class="nav-link"><i class="fas fa-comments"></i> Testimonios</a></li>
-                <li title="Contacto"><a href="/admin/contacts" class="nav-link"><i class="fas fa-phone"></i> Contacto</a></li>
-                <li title="Pagos realizados"><a href="/getPayment" class="nav-link"><i class="fas fa-credit-card"></i> Pagos</a></li>
-            </ul>
-            
-            <div class="hamburger" id="hamburger">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
 
-        </div>
-    </nav>
+    <%- include('partials/nav') %>
 
     <header class="hero">
         <div class="hero-content">
@@ -294,48 +273,17 @@
         </div>
     </section>
 
-    <footer class="main-footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>SeguriHome</h4>
-                <nav class="footer-nav">
-                    <a href="#servicios">Servicios</a>
-                    <a href="#tecnologia">Tecnología</a>
-                </nav>
-            </div>
-            
-            <div class="footer-section">
-                <h4>Legal</h4>
-                <nav class="footer-nav">
-                    <a href="#">Términos de Servicio</a>
-                    <a href="#">Política de Privacidad</a>
-                </nav>
-            </div>
-            
-            <div class="footer-section">
-                <h4>Conéctate</h4>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-whatsapp"></i></a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer-copyright">
-            <p>© 2025 SeguriHome. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+    
     <script>
         // Hamburger Menu Toggle
-document.addEventListener('DOMContentLoaded', () => {
-    const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('navMenu');
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('navMenu');
 
-    hamburger.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-    });
-});
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        });
     </script>
     <script src='/js/main.js'></script>
     <script src="/js/fetch.js"></script>

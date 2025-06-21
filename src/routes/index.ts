@@ -1,15 +1,19 @@
 import { Router } from 'express';
 import path from 'path';
 import ContactosController from '@controllers/controllers.js';
-
+import { isAuthenticated, isGuest } from '@middlewares/authMiddleware';
 const router = Router();
 
 router.get('/',ContactosController.index);
-router.get('/admin/contacts',ContactosController.getAllContacts);
-router.get('/payment',ContactosController.payment);
-router.get('/getPayment',ContactosController.getPayment);
-
+router.get('/admin/contacts',isAuthenticated,ContactosController.getAllContacts);
+router.get('/payment',isAuthenticated,ContactosController.payment);
+router.get('/getPayment',isAuthenticated,ContactosController.getPayment);
+router.get('/login',ContactosController.login);
+router.get('/logout',ContactosController.logout)
+//RUTAS POST
 router.post('/contact/add',ContactosController.add);
 router.post('/payment/add',ContactosController.paymentAdd);
+router.post('/registerUser',isGuest,ContactosController.registerUser);
+router.post('/loginPost',isGuest,ContactosController.loginPost);
 
 export default router;

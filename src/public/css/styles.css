@@ -7,7 +7,6 @@
     --text-light: #FFF;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
   * {
     margin: 0;
     padding: 0;
@@ -60,9 +59,13 @@
   
   .nav-link {
     color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 500;
-    transition: var(--transition);
+    text-decoration:none;
+    font-weight:500;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    gap:.3rem;
+    transition:var(--transition);
   }
   
   .nav-link:hover {

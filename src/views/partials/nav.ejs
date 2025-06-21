@@ -1,0 +1,26 @@
+<nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <h1>SeguriHome</h1>
+                <img src="/img/261.svg" alt="Sistema de seguridad inteligente" class="nav-img">
+            </a>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#servicios" class="nav-link"><i class="fas fa-shield-alt"></i> Servicios</a></li>
+                <li title="Contacto"><a href="/admin/contacts" class="nav-link"><i class="fas fa-phone"></i> Contacto</a></li>
+                <li title="Pagos realizados"><a href="/getPayment" class="nav-link"><i class="fas fa-credit-card"></i> Pagos</a></li>
+                
+                <li><a href="/login?form=login" class="nav-link"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a></li>
+                <% if(isAdmin){%>
+                <li><a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i>Cerrar</a></li>
+                <% } %>
+            </ul>
+            
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+
+        </div>
+    </nav>
