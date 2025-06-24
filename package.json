@@ -5,7 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "dev": "nodemon --exec \"node --no-warnings --import tsx/esm src/app.ts\"",
-    "build": "tsc && tsc-alias && copyfiles -u 1 src/public/**/* dist/ && copyfiles -u 1 src/views/**/* dist/ && copyfiles -u 1 src/config/**/* dist/",
+    "build": "npm install --include=dev && tsc && tsc-alias && copyfiles -u 1 src/public/**/* dist/ && copyfiles -u 1 src/views/**/* dist/ && copyfiles -u 1 src/config/**/* dist/",
     "start": "node dist/app.js",
     "prestart": "npm run build"
   },
