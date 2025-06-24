@@ -12,9 +12,3 @@ declare module 'express' {
     session: Session & Partial<SessionData>;
   }
 }
-
-// Declaraciones para módulos sin tipos
-declare module 'cookie-parser';
-declare module 'express-session';
-declare module 'bcrypt';
-declare module 'nodemailer';

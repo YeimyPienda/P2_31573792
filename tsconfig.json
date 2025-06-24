@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target":"ES2022",
-    "module":"NodeNext",
-    "moduleResolution":"NodeNext",
-    "outDir":"./dist",
-    "rootDir":"./src",
-    "strict":true,
-    "esModuleInterop":true,
-    "skipLibCheck":true,
-    "forceConsistentCasingInFileNames":true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": "./src",
     "paths": {
       "@controllers/*": ["controllers/*"],
@@ -19,8 +19,15 @@
       "@config/*": ["config/*"],
       "@views/*": ["views/*"]
     },
-    "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["node", "express", "express-session"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "types": [
+      "node",  // Mover node al principio
+      "express",
+      "express-session"
+    ],
     "sourceMap": true,
     "inlineSources": true,
     "noImplicitAny": true,
@@ -30,6 +37,14 @@
     "noImplicitThis": true,
     "alwaysStrict": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "tests", "**/*.spec.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests",
+    "**/*.spec.ts"
+  ]
 }
