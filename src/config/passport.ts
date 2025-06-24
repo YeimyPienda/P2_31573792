@@ -4,22 +4,27 @@ dotenv.config();
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import contactosModel from '@models/models.js'; // Ajusta la ruta según tu estructura
 const UserModel = contactosModel.getModelUser();
+
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID!,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
   callbackURL: process.env.NODE_ENV === 'production'
-  ? 'https://p2-31573792-2.onrender.com/auth/google/callback'
-  : 'http://localhost:3000/auth/google/callback',
-
+    ? 'https://p2-31573792-2.onrender.com/auth/google/callback'
+    : 'http://localhost:3000/auth/google/callback',
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    const email = profile.emails?.[0].value;
+    const email = profile.emails?.[0]?.value;
+    
+    if (!email) {
+      return done(new Error('No email provided by Google'));
+    }
+
     let user = await UserModel.findOne({ where: { email } });
 
     if (!user) {
       user = await UserModel.create({
         username: profile.displayName,
-        email,
+        email: email, // Ahora estamos seguros que email es string
         googleId: profile.id,
         provider: 'google'
       });
@@ -48,6 +53,5 @@ passport.deserializeUser(async (id: number, done) => {
     done(err);
   }
 });
-
 
 export default passport;

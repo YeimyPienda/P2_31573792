@@ -1,34 +1,37 @@
-import { Sequelize, DataTypes, Model, Optional , Op} from 'sequelize';
-
+import { Sequelize, DataTypes, Model, Optional, Op, WhereOptions } from 'sequelize';
 import path from 'path';
-import { fileURLToPath } from 'url'; 
+import { fileURLToPath } from 'url';
 import bcrypt from 'bcrypt';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Definición de la interfaz para los atributos del Contacto
+// Contacto
 interface ContactoAttributes {
-  id:number;
-  email:string;
-  nombre:string;
-  comentario:string;
-  pais:string;
+  id: number;
+  email: string;
+  nombre: string;
+  comentario: string;
+  pais: string;
   ip: string;
-  createdAt?:Date;
-  updatedAt?:Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-// Atributos opcionales para creación (id es autoincremental)
 interface ContactoCreationAttributes extends Optional<ContactoAttributes, 'id'> {}
 
-// Clase del modelo Contacto con TypeScript
-class ContactoModel extends Model<ContactoAttributes, ContactoCreationAttributes>{
-  // Timestamps
+class ContactoModel extends Model<ContactoAttributes, ContactoCreationAttributes> implements ContactoAttributes {
+  public id!: number;
+  public email!: string;
+  public nombre!: string;
+  public comentario!: string;
+  public pais!: string;
+  public ip!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-// Añade estas interfaces al archivo
+// Payment
 interface PaymentAttributes {
   id: number;
   correo: string;
@@ -36,360 +39,194 @@ interface PaymentAttributes {
   cardNumber: string;
   expMonth: number;
   expYear: number;
-  cvv:string;
+  cvv: string;
   currency: string;
-  amount:string;
-  descripcion:string;
-  reference:string;
-  estado:string;
+  amount: string;
+  descripcion: string;
+  reference: string;
+  estado: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 interface PaymentCreationAttributes extends Optional<PaymentAttributes, 'id'> {}
 
-class PaymentModel extends Model<PaymentAttributes, PaymentCreationAttributes>{
+class PaymentModel extends Model<PaymentAttributes, PaymentCreationAttributes> implements PaymentAttributes {
+  public id!: number;
+  public correo!: string;
+  public nombreTitular!: string;
+  public cardNumber!: string;
+  public expMonth!: number;
+  public expYear!: number;
+  public cvv!: string;
+  public currency!: string;
+  public amount!: string;
+  public descripcion!: string;
+  public reference!: string;
+  public estado!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-// Configuración de Sequelize
+// User
+interface UserAttributes {
+  id: number;
+  username?: string;
+  email: string;
+  password_hash?: string | null;
+  googleId?: string;
+  provider?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'password_hash' | 'googleId' | 'provider'> {}
+
+export class UserModel extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+  public id!: number;
+  public email!: string;
+  public username?: string;
+  public password_hash?: string | null;
+  public googleId?: string;
+  public provider?: string;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+// Sequelize setup
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: path.join(__dirname, '../config/base.db'),
+  storage: path.join(__dirname, '../config/base.db')
 });
 
-// Inicialización del modelo
-ContactoModel.init(
-{
-  id:{
-    type:DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
-  email:{
-    type: DataTypes.STRING(30),
-    allowNull: false
-  },
-  nombre:{
-    type: DataTypes.STRING(30),
-    allowNull: false
-  },
-  comentario:{
-    type: DataTypes.STRING(30),
-    allowNull: false
-  },
-  pais:{
-    type:DataTypes.STRING,
-    allowNull:false
-  },
-  ip:{
-    type:DataTypes.STRING,
-    allowNull:false
-  }
-},
-{
+// Init models
+ContactoModel.init({
+  id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+  email: { type: DataTypes.STRING(30), allowNull: false },
+  nombre: { type: DataTypes.STRING(30), allowNull: false },
+  comentario: { type: DataTypes.STRING(30), allowNull: false },
+  pais: { type: DataTypes.STRING, allowNull: false },
+  ip: { type: DataTypes.STRING, allowNull: false }
+}, {
   sequelize,
   modelName: 'contacto',
   timestamps: true,
   freezeTableName: true
-}
-);
+});
 
-// Inicialización del modelo Payment
-PaymentModel.init(
-{
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
-  correo: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    validate: {
-      isEmail: true
-    }
-  },
-  nombreTitular: {
-    type: DataTypes.STRING(60),
-    allowNull: false
-  },
-  cardNumber: {
-      type: DataTypes.STRING(19), // Para formato "4242 4242 4242 4242"
-      allowNull: false
-    },
-    expMonth: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        min: 1,
-        max: 12
-      }
-    },
-    expYear: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        min: new Date().getFullYear()
-      }
-    },
-    cvv: {
-      type: DataTypes.STRING(4),
-      allowNull: false
-    },
-    currency: {
-      type: DataTypes.STRING(3),
-      allowNull: false
-    },
-    amount:{
-      type:DataTypes.DECIMAL,
-      allowNull:false
-    },
-    descripcion:{
-      type:DataTypes.STRING,
-      allowNull:false
-    },
-    reference:{
-      type:DataTypes.STRING,
-      allowNull:false
-    },
-    estado: {
-  type: DataTypes.STRING(20), // Ej: 'aprobado', 'rechazado', 'pendiente'
-  allowNull: false,
-  defaultValue: 'pendiente'
-}
-},
-{
+PaymentModel.init({
+  id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+  correo: { type: DataTypes.STRING(50), allowNull: false, validate: { isEmail: true } },
+  nombreTitular: { type: DataTypes.STRING(60), allowNull: false },
+  cardNumber: { type: DataTypes.STRING(19), allowNull: false },
+  expMonth: { type: DataTypes.INTEGER, allowNull: false, validate: { min: 1, max: 12 } },
+  expYear: { type: DataTypes.INTEGER, allowNull: false, validate: { min: new Date().getFullYear() } },
+  cvv: { type: DataTypes.STRING(4), allowNull: false },
+  currency: { type: DataTypes.STRING(3), allowNull: false },
+  amount: { type: DataTypes.DECIMAL, allowNull: false },
+  descripcion: { type: DataTypes.STRING, allowNull: false },
+  reference: { type: DataTypes.STRING, allowNull: false },
+  estado: { type: DataTypes.STRING(20), allowNull: false, defaultValue: 'pendiente' }
+}, {
   sequelize,
   modelName: 'payment',
   timestamps: true,
   freezeTableName: true
-}
-);
-interface UserAttributes {
-  id: number;
-  username?: string; // Hacerlo opcional para usuarios de Google
-  email: string;
-  password_hash?: string | null; // Hacerlo opcional y nullable
-  googleId?: string; // Nuevo campo para el ID de Google
-  provider?: string; // 'local' o 'google'
-  createdAt: Date;
-  updatedAt: Date;
-}
+});
 
-interface UserCreationAttributes extends Optional<UserAttributes, 
-'id' | 'createdAt' | 'updatedAt' | 'password_hash' | 'googleId' | 'provider'> {}
-
-export class UserModel extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {}
-
-UserModel.init(
-{
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  password_hash: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  googleId: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  provider: {
-    type: DataTypes.STRING,
-    allowNull: true,
-    defaultValue: 'local'
-  }
-},
-{
+UserModel.init({
+  id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+  username: { type: DataTypes.STRING, allowNull: true },
+  email: { type: DataTypes.STRING, allowNull: false, unique: true },
+  password_hash: { type: DataTypes.STRING, allowNull: true },
+  googleId: { type: DataTypes.STRING, allowNull: true },
+  provider: { type: DataTypes.STRING, allowNull: true, defaultValue: 'local' }
+}, {
   sequelize,
   modelName: 'user',
   tableName: 'user',
   timestamps: true
-}
-);
+});
+
 class ContactsModel {
   constructor() {
     this.connect();
   }
-  /**
-   * Conecta y sincroniza el modelo con la base de datos
-   * @returns {Promise<void>}
-   */
-  private async connect():Promise<void>{
+
+  private async connect(): Promise<void> {
     try {
-      await sequelize.sync({force:false});
+      await sequelize.sync({ force: false });
       console.log('Base de datos sincronizada correctamente');
-      console.log('Ubicación de la base de datos:', path.join(__dirname, '../config/base.db'))
-    } catch (error){
+    } catch (error) {
       console.error('Error al sincronizar la base de datos:', error);
       throw error;
     }
   }
-  /**
-   * Agrega un nuevo contacto
-   * @param {ContactoCreationAttributes} contactData - Datos del contacto
-   * @returns {Promise<ContactoModel>} El contacto creado
-   */
+
   public async addContact(contactData: ContactoCreationAttributes): Promise<ContactoModel> {
-    try {
-      return await ContactoModel.create(contactData);
-    } catch (error) {
-      console.error('Error al agregar el contacto:', error);
-      throw error;
-    }
+    return await ContactoModel.create(contactData);
   }
-  /**
-   * Obtiene todos los contactos
-   * @returns {Promise<ContactoModel[]>} Lista de contactos
-   */
+
   public async getAllContacts(): Promise<ContactoAttributes[]> {
-    try {
-      const data = await ContactoModel.findAll({ 
-      raw: true, // Devuelve objetos planos
-      order: [['createdAt','DESC']] // Ordenar por fecha
-    });
-      return data;
-    } catch (error) {
-      console.error('Error al obtener contactos:', error);
-      throw error;
-    }
+    const result = await ContactoModel.findAll({ raw: true, order: [['createdAt', 'DESC']] });
+    return result as unknown as ContactoAttributes[];
   }
-  // Ejemplo de método adicional con TypeScript
-  /**
-   * Obtiene un contacto por ID
-   * @param {number} id - ID del contacto
-   * @returns {Promise<ContactoModel | null>} El contacto encontrado o null
-   */
+
   public async getContactById(id: number): Promise<ContactoModel | null> {
-    try {
-      return await ContactoModel.findByPk(id);
-    } catch (error) {
-      console.error('Error al obtener el contacto:', error);
-      throw error;
-    }
+    return await ContactoModel.findByPk(id);
   }
-  /**
-   * Agrega un nuevo pago
-   * @param {PaymentCreationAttributes} paymentData - Datos del pago
-   * @returns {Promise<PaymentModel>} El pago creado
-   */
+
   public async paymentAdd(paymentData: PaymentCreationAttributes): Promise<PaymentModel> {
-    try {
-      // Limpiamos espacios en el número de tarjeta
-      const cleanedCardNumber = paymentData.cardNumber.replace(/\s/g, '');
-      
-      return await PaymentModel.create({
-        ...paymentData,
-        cardNumber: cleanedCardNumber
-      });
-    } catch (error) {
-      console.error('Error al agregar el pago:', error);
-      throw error;
-    }
-  }
-  /**
-   * Obtiene todos los pagos
-   * @returns {Promise<PaymentModel[]>} Lista de pagos
-   */
-  public async getAllPayments():Promise<PaymentAttributes[]> {
-    try {
-      return await PaymentModel.findAll({
-        raw: true,
-        order: [['createdAt','DESC']]
-      });
-    } catch (error) {
-      console.error('Error al obtener los pagos:', error);
-      throw error;
-    }
-  }
-  public async filterPayment(where):Promise<any>{
-   try{
-    return await PaymentModel.findAll({ where, order: [['createdAt', 'DESC']] });
-   }catch(error:any){
-    console.log('Error al obtener los pagos:', error);
-     throw error;
-   }
-  }
-  public async registerUser(data:UserCreationAttributes):Promise<UserModel>{
-    try{
-      return await UserModel.create(data);
-    }catch(error:any){
-      console.error('Error al registrar usuarios:', error.message);
-      throw error;
-    }
-  }
-  public async loginPost(data: {email: string, password_hash: string}): Promise<{success: boolean, message?: string,user?:UserAttributes}> {
-    try {
-      const user = await UserModel.findOne({ where: { email: data.email } });
-      if (!user) {
-        return { success: false, message: 'Usuario no encontrado' };
-      }
-
-    // Verifica si es un usuario de Google
-      if (user.provider === 'google') {
-        return { success: false, message: 'Este usuario debe iniciar sesión con Google' };
-      }
-
-    // Verifica que ambas contraseñas estén presentes
-      if (!user.password_hash || !data.password_hash) {
-        return { success: false, message: 'Faltan credenciales' };
-      }
-
-      const isMatch = await bcrypt.compare(data.password_hash, user.password_hash);
-
-      if (!isMatch) {
-        return { success: false, message: 'Contraseña incorrecta' };
-      }
-
-      return { success: true, user };
-
-    } catch (error: any) {
-      console.error('Error al iniciar sesión:', error.message);
-      throw new Error('Error en el servidor al verificar credenciales');
-    }
+    const cleanedCardNumber = paymentData.cardNumber.replace(/\s/g, '');
+    return await PaymentModel.create({
+      ...paymentData,
+      estado: paymentData.estado || 'pendiente',
+      cardNumber: cleanedCardNumber
+    });
   }
 
-  public getModelUser():UserAttributes[]{
-    try{
-     return UserModel;
-   }catch(error){
-    console.error('Error al obtener modelo:', error.message);
-    throw new Error('Error al obtener modelo UserModel');
+  public async getAllPayments(): Promise<PaymentAttributes[]> {
+    const result = await PaymentModel.findAll({ raw: true, order: [['createdAt', 'DESC']] });
+    return result as unknown as PaymentAttributes[];
   }
-}
-public async getFilteredContact(query:string):Promise<ContactoAttributes[]>{
-  try{
-   let whereCondition = {};
-   if (query){
-    whereCondition = {
-      [Op.or]: [
-          { nombre: { [Op.like]: `%${query}%` } }, // iLike para no distinguir mayúsculas/minúsculas (PostgreSQL)
+
+  public async filterPayment(where: WhereOptions<PaymentAttributes>): Promise<PaymentAttributes[]> {
+    const result = await PaymentModel.findAll({ where, order: [['createdAt', 'DESC']] });
+    return result as unknown as PaymentAttributes[];
+  }
+
+  public async registerUser(data: UserCreationAttributes): Promise<UserModel> {
+    return await UserModel.create(data);
+  }
+
+  public async loginPost(data: { email: string; password_hash: string }): Promise<{ success: boolean; message?: string; user?: UserAttributes }> {
+    const user = await UserModel.findOne({ where: { email: data.email } });
+    if (!user) return { success: false, message: 'Usuario no encontrado' };
+    if (user.provider === 'google') return { success: false, message: 'Este usuario debe iniciar sesión con Google' };
+    if (!user.password_hash || !data.password_hash) return { success: false, message: 'Faltan credenciales' };
+    const isMatch = await bcrypt.compare(data.password_hash, user.password_hash);
+    if (!isMatch) return { success: false, message: 'Contraseña incorrecta' };
+    return { success: true, user: user.get({ plain: true }) };
+  }
+
+  public getModelUser(): typeof UserModel {
+    return UserModel;
+  }
+
+  public async getFilteredContact(query: string): Promise<ContactoAttributes[]> {
+    let whereCondition = {};
+    if (query) {
+      whereCondition = {
+        [Op.or]: [
+          { nombre: { [Op.like]: `%${query}%` } },
           { email: { [Op.like]: `%${query}%` } }
         ]
       };
     }
     const result = await ContactoModel.findAll({ where: whereCondition });
-    return result;
-  }catch(error:any){
-    console.error('Error al filtrar:', error.message);
-    throw new Error('Error en el servidor');
+    return result as unknown as ContactoAttributes[];
   }
 }
-}
 
-// Exportamos una instancia única del modelo (Singleton)
 const contactosModelInstance = new ContactsModel();
 export default contactosModelInstance;

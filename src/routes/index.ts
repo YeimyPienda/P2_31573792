@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import path from 'path';
 import ContactosController from '@controllers/controllers.js';
-import { isAuthenticated, isGuest } from '@middlewares/authMiddleware';
+import { isAuthenticated, isGuest } from '@middlewares/authMiddleware.js';
 const router = Router();
 
 router.get('/',ContactosController.index);

@@ -1,20 +1,18 @@
-// middlewares/authMiddleware.ts
+// src/middlewares/authMiddleware.ts
 import { Request, Response, NextFunction } from 'express';
 
-export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  if (req.session && req.session.userId) {
-    // Usuario autenticado, continuar
-    return next();
+export const isAuthenticated = (req: Request, res: Response, next: NextFunction): void => {
+  if (req.session.userId) {
+    next();
+    return;
   }
-  // Usuario no autenticado
-  return res.status(401).json({ message: 'No autorizado' });
+  res.redirect('/login');
 };
 
-export const isGuest = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.session?.userId) {
-    // Usuario no autenticado, continuar
-    return next();
+export const isGuest = (req: Request, res: Response, next: NextFunction): void => {
+  if (!req.session.userId) {
+    next();
+    return;
   }
-  // Usuario ya autenticado
-  return res.redirect('/admin/contacts');
+  res.redirect('/');
 };
