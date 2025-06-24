@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import axios from 'axios';
 import bcrypt from 'bcrypt';
 import { sendEmail } from '../utils/nodemailer.js';
-import { UniqueConstraintError, Model, Optional} from 'sequelize'; // Importación añadida
+import { UniqueConstraintError, Model, Optional,Op} from 'sequelize'; // Importación añadida
 
 let formType: string;
 
@@ -53,9 +53,54 @@ class ContactsController {
     status: false,
     message: 'Error interno al filtrar',
   });
-
  }
 }
+ async filterPayment(req: Request, res: Response):Promise<void>{
+  const { q, estado, servicio, fechaInicio, fechaFin } = req.query;
+
+  const where: any = {};
+
+  // Búsqueda por nombre o correo
+  if (q) {
+    where[Op.or] = [
+      { nombreTitular: { [Op.like]: `%${q}%` } },
+      { correo: { [Op.like]: `%${q}%` } },
+    ];
+  }
+
+  // Filtro por estado
+  if (estado) {
+    where.estado = estado;
+  }
+
+  // Filtro por descripción/servicio
+  if (servicio) {
+    where.descripcion = servicio;
+  }
+
+  // Rango de fechas
+  if (fechaInicio && fechaFin) {
+    where.createdAt = {
+      [Op.between]: [new Date(fechaInicio as string), new Date(fechaFin as string)]
+    };
+  } else if (fechaInicio) {
+    where.createdAt = {
+      [Op.gte]: new Date(fechaInicio as string)
+    };
+  } else if (fechaFin) {
+    where.createdAt = {
+      [Op.lte]: new Date(fechaFin as string)
+    };
+  }
+
+  try {
+    const results = await ContactosModel.filterPayment(where);
+    return res.json({ status: true, filterResult: results });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: false, message: 'Error al filtrar pagos' });
+  }
+};
   /**
    * Agrega un nuevo contacto y envía notificación por correo
    */

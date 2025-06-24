@@ -41,6 +41,7 @@ interface PaymentAttributes {
   amount:string;
   descripcion:string;
   reference:string;
+  estado:string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -74,7 +75,7 @@ ContactoModel.init(
     type: DataTypes.STRING(30),
     allowNull: false
   },
-  comentario: {
+  comentario:{
     type: DataTypes.STRING(30),
     allowNull: false
   },
@@ -152,15 +153,20 @@ PaymentModel.init(
     reference:{
       type:DataTypes.STRING,
       allowNull:false
-    }
-  },
-  {
-    sequelize,
-    modelName: 'payment',
-    timestamps: true,
-    freezeTableName: true
-  }
-  );
+    },
+    estado: {
+  type: DataTypes.STRING(20), // Ej: 'aprobado', 'rechazado', 'pendiente'
+  allowNull: false,
+  defaultValue: 'pendiente'
+}
+},
+{
+  sequelize,
+  modelName: 'payment',
+  timestamps: true,
+  freezeTableName: true
+}
+);
 interface UserAttributes {
   id: number;
   username?: string; // Hacerlo opcional para usuarios de Google
@@ -178,41 +184,41 @@ interface UserCreationAttributes extends Optional<UserAttributes,
 export class UserModel extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {}
 
 UserModel.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true
-    },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },
-    password_hash: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    googleId: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    provider: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: 'local'
-    }
+{
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
   },
-  {
-    sequelize,
-    modelName: 'user',
-    tableName: 'user',
-    timestamps: true
+  username: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  password_hash: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  googleId: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  provider: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'local'
   }
+},
+{
+  sequelize,
+  modelName: 'user',
+  tableName: 'user',
+  timestamps: true
+}
 );
 class ContactsModel {
   constructor() {
@@ -309,6 +315,14 @@ class ContactsModel {
       throw error;
     }
   }
+  public async filterPayment(where):Promise<any>{
+   try{
+    return await PaymentModel.findAll({ where, order: [['createdAt', 'DESC']] });
+   }catch(error:any){
+    console.log('Error al obtener los pagos:', error);
+     throw error;
+   }
+  }
   public async registerUser(data:UserCreationAttributes):Promise<UserModel>{
     try{
       return await UserModel.create(data);
@@ -356,12 +370,12 @@ class ContactsModel {
     throw new Error('Error al obtener modelo UserModel');
   }
 }
-  public async getFilteredContact(query:string):Promise<ContactoAttributes[]>{
-    try{
-     let whereCondition = {};
-     if (query){
-      whereCondition = {
-        [Op.or]: [
+public async getFilteredContact(query:string):Promise<ContactoAttributes[]>{
+  try{
+   let whereCondition = {};
+   if (query){
+    whereCondition = {
+      [Op.or]: [
           { nombre: { [Op.like]: `%${query}%` } }, // iLike para no distinguir mayúsculas/minúsculas (PostgreSQL)
           { email: { [Op.like]: `%${query}%` } }
         ]
