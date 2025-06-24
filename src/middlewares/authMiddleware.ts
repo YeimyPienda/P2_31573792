@@ -6,7 +6,7 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
     next();
     return;
   }
-  res.redirect('/login');
+  res.redirect('/login');//a
 };
 
 export const isGuest = (req: Request, res: Response, next: NextFunction): void => {
