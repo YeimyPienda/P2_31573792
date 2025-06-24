@@ -19,7 +19,8 @@
       "@config/*": ["config/*"],
       "@views/*": ["views/*"]
     },
-    "types": ["node"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["node", "express", "express-session"],
     "sourceMap": true,
     "inlineSources": true,
     "noImplicitAny": true,

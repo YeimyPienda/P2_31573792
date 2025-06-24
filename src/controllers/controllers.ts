@@ -413,7 +413,7 @@ class ContactsController {
 }
 
   async logout(req: Request, res: Response): Promise<void> {
-    req.session.destroy((err) => {
+    req.session.destroy((err:any) => {
       if (err) {
         console.error('Error al cerrar sesión:', err);
         res.status(500).json({ message: 'Error al cerrar sesión' });
