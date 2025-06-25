@@ -5,7 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "dev": "nodemon --exec \"node --no-warnings --import tsx/esm src/app.ts\"",
-    "build": "npm install @types/express-session && tsc && tsc-alias && copyfiles -u 1 src/public/**/* dist/ && copyfiles -u 1 src/views/**/* dist/ && copyfiles -u 1 src/config/**/* dist/",
+    "build": "tsc && tsc-alias && cp -r src/public dist/ && cp -r src/views dist/ && cp -r src/config dist/",
     "start": "node dist/app.js",
     "prestart": "npm run build"
   },
@@ -23,7 +23,6 @@
     "axios": "^1.9.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
-    "copyfiles": "^2.4.1",
     "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
@@ -40,6 +39,7 @@
     "@types/express": "^5.0.3",
     "@types/nanoid": "^2.1.0",
     "@types/node": "^22.15.33",
+    "copyfiles": "^2.4.1",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
