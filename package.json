@@ -14,7 +14,10 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.9",
     "@types/express-session": "^1.18.2",
+    "@types/nodemailer": "^6.4.17",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
     "axios": "^1.9.0",
@@ -33,12 +36,9 @@
     "tsc-alias": "^1.8.16"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.3",
     "@types/nanoid": "^2.1.0",
     "@types/node": "^22.15.33",
-    "@types/nodemailer": "^6.4.17",
     "copyfiles": "^2.4.1",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
