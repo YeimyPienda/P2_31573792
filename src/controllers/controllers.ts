@@ -136,7 +136,7 @@ class ContactsController {
         'https://www.google.com/recaptcha/api/siteverify',
         null,
         { params: { secret: SECRET_KEY, response: token } }
-      );
+        );
 
       if (!recaptchaResponse.data.success) {
         res.status(400).json({ 
@@ -148,8 +148,8 @@ class ContactsController {
 
       const ip = req.ip || 'unknown';
       const ipstackResponse = await fetch(
-        `http://api.ipstack.com/${ip}?access_key=${process.env.KEYIPAPI}`
-      );
+    `http://api.ipstack.com/${ip}?access_key=${process.env.KEYIPAPI}`
+    );
       const ipstackData = await ipstackResponse.json();
       const pais = ipstackData.country_name || 'datos-de-prueba-activados';
 
@@ -162,7 +162,7 @@ class ContactsController {
         Comentario: ${comentario}
         Pais: ${pais}
         dirección IP: ${ip}
-        fecha y hora: ${new Date()}`;
+      fecha y hora: ${new Date()}`;
 
       const recipients = ['programacion2ais@yopmail.com', 'angelguerra378@gmail.com'];
       const result = await sendEmail(recipients, subject, message);
@@ -384,44 +384,57 @@ class ContactsController {
     }
   }
 
-  async loginPost(req: Request, res: Response): Promise<void> {
-  const { email, password_hash } = req.body;
+  async loginPost(req: Request, res: Response):Promise<void>{
   try {
-    const result = await ContactosModel.loginPost({ email, password_hash });
-    if (result.success && result.user && result.user.username) { // Verificamos que username existe
-      if (req.session) {
-        req.session.userId = result.user.id as number;
-        req.session.username = result.user.username; // Ahora TypeScript sabe que username es string
-      }
-      res.json({ 
-        status: true,
-        message: 'Bienvenido al sistema',
-      });
-    } else {
-      res.status(401).json({
-        status: false,
-        message: result.message || 'Credenciales inválidas'
-      });
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      res.json({ status: false, message: '¡Faltan credenciales!' });
+      return;
     }
-  } catch (error: any) {
-    console.error('Error en el servidor:', error.message);
-    res.status(500).json({
-      status: false,
-      message: 'Error interno al iniciar sesión'
-    });
+
+    // Llamar al modelo con la nueva firma de retorno tipada
+    const result = await ContactosModel.loginPost({ email, password });
+
+    if (!result.success) {
+      res.json({ status: false, message: result.message || 'Credenciales incorrectas' });
+      return;
+    }
+
+    if (result.user) {
+      req.session.userId = result.user.id;
+      req.session.username = result.user.username || result.user.email;
+
+      res.json({
+        status: true,
+        message: '¡Bienvenido al sistema!',
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          username: result.user.username
+        }
+      });
+      return;
+    }
+
+    res.json({ status: false, message: 'Error en la autenticación' });
+
+  } catch (error) {
+    console.error('Error en login:', error);
+    res.json({ status: false, message: 'Error interno del servidor' });
   }
 }
 
-  async logout(req: Request, res: Response): Promise<void> {
-    req.session.destroy((err:any) => {
-      if (err) {
-        console.error('Error al cerrar sesión:', err);
-        res.status(500).json({ message: 'Error al cerrar sesión' });
-        return;
-      }
-      res.redirect('/');
-    });
-  }
+async logout(req: Request, res: Response): Promise<void> {
+  req.session.destroy((err:any) => {
+    if (err) {
+      console.error('Error al cerrar sesión:', err);
+      res.status(500).json({ message: 'Error al cerrar sesión' });
+      return;
+    }
+    res.redirect('/');
+  });
+}
 }
 
 export default new ContactsController();

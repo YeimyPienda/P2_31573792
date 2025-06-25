@@ -199,15 +199,31 @@ class ContactsModel {
     return await UserModel.create(data);
   }
 
-  public async loginPost(data: { email: string; password_hash: string }): Promise<{ success: boolean; message?: string; user?: UserAttributes }> {
-    const user = await UserModel.findOne({ where: { email: data.email } });
+  public async loginPost(data: { email: string; password: string }): Promise<{ success: boolean; message?: string; user?: any }>
+  {
+    console.log(data, '← datos recibidos en loginPost');
+
+    const user = await UserModel.findOne({ where: { email: data.email }, raw: true});
+    console.log(user,'  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx MODEL');
     if (!user) return { success: false, message: 'Usuario no encontrado' };
-    if (user.provider === 'google') return { success: false, message: 'Este usuario debe iniciar sesión con Google' };
-    if (!user.password_hash || !data.password_hash) return { success: false, message: 'Faltan credenciales' };
-    const isMatch = await bcrypt.compare(data.password_hash, user.password_hash);
+
+  // Validar si es usuario de Google
+    if (user.provider === 'google') {
+      return { success: false, message: 'Este usuario debe iniciar sesión con Google' };
+    }
+
+  // Validar que tenga una contraseña seteada
+    if (!user.password_hash) {
+      return { success: false, message: 'El usuario no tiene contraseña establecida' };
+    }
+
+    const isMatch = await bcrypt.compare(data.password, user.password_hash);
     if (!isMatch) return { success: false, message: 'Contraseña incorrecta' };
-    return { success: true, user: user.get({ plain: true }) };
+
+    return { success: true, user };
   }
+
+
 
   public getModelUser(): typeof UserModel {
     return UserModel;

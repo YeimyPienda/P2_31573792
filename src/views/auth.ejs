@@ -45,7 +45,7 @@
   </button>
 </div>
 
-<% if (formType === 'login') { %>
+<% if (formType === 'login'){%>
 <form id='formLogin' class="auth-form">
   <h2>Iniciar Sesión</h2>
 
@@ -65,7 +65,7 @@
     <input 
     type="password" 
     id="login-password" 
-    name="password_hash" 
+    name="password" 
     required
     placeholder="••••••••"
     >
@@ -141,13 +141,13 @@
   }
 </script>
 <script>
+  let data,formData
   const formRegister = document.querySelector('#formRegister');
   if (formRegister) {
     formRegister.addEventListener('submit', e => {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-
+      formData = new FormData(e.target);
+      data = Object.fromEntries(formData.entries());
       fetch('/registerUser', {
         method: 'POST',
         headers: {
@@ -168,9 +168,8 @@
   if (formLogin) {
     formLogin.addEventListener('submit', e => {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-
+      formData = new FormData(e.target);
+      data = Object.fromEntries(formData.entries());
       fetch('/loginPost', {
         method: 'POST',
         headers: {
